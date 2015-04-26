@@ -41,13 +41,51 @@
 
         <!--TitlePanel contient le nom de l'application et le titre de la page-->
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="MON APPLICATION" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,0"/>
-            <TextBlock Text="nom de la page" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Text="Twitter Wall for Windows Phone 8" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,0"/>
+            <TextBlock x:Name="HeaderLabel" Text="#" Margin="9,-7,0,0" Style="{StaticResource PhoneTextLargeStyle}"/>
         </StackPanel>
 
         <!--ContentPanel - placez tout contenu supplémentaire ici-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-
+			<TextBlock x:Name="StatusLabel" Style="{StaticResource PhoneTextNormalStyle}"/>
+			<phone:LongListSelector x:Name="TweetList">
+				<phone:LongListSelector.ItemTemplate>
+					<DataTemplate>
+						<Grid Margin="0,12,0,0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="*" />
+							</Grid.RowDefinitions>
+							
+							<Image Grid.Row="0"
+								   Grid.Column="0"
+								   Grid.RowSpan="2"
+								   VerticalAlignment="Top"
+								   HorizontalAlignment="Center"
+								   Margin="12,8,12,0"
+								   Source="{Binding UserImage}" />
+							
+							<TextBlock Grid.Row="0"
+									   Grid.Column="1"
+									   FontFamily="{StaticResource PhoneFontFamilyBold}"
+									   Text="{Binding UserName, StringFormat='@{0}'}"
+									   TextWrapping="Wrap"
+									   Margin="0,0,12,0"
+									   />
+							<TextBlock Grid.Row="1"
+									   Grid.Column="1"
+									   Text="{Binding Text}"
+									   TextWrapping="Wrap"
+									   Margin="0,6,12,0"
+									   />
+						</Grid>
+					</DataTemplate>
+				</phone:LongListSelector.ItemTemplate>
+			</phone:LongListSelector>
         </Grid>
 
         <!--Supprimez les commentaires pour voir une grille d'alignement qui vous aidera à vous assurer que vos contrôles sont

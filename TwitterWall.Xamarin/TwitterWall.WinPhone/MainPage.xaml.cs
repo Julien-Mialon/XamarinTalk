@@ -1,41 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using TwitterWall.Model;
 using TwitterWall.WinPhone.Resources;
 
 namespace TwitterWall.WinPhone
 {
 	public partial class MainPage : PhoneApplicationPage
 	{
+		private readonly ObservableCollection<Tweet> _source = new ObservableCollection<Tweet>(); 
+
 		// Constructeur
 		public MainPage()
 		{
 			InitializeComponent();
 
-			// Exemple de code pour la localisation d'ApplicationBar
-			//BuildLocalizedApplicationBar();
+			HeaderLabel.Text = string.Format("#{0}", Bootstrap.HASHTAG);
+			StatusLabel.Text = "Loading data from Twitter API...";
+			TweetList.ItemsSource = _source;
+
+			Bootstrap.Initialize();
+			Bootstrap.TwitterSearchService.SearchAsync(Bootstrap.HASHTAG).ContinueWith(x =>
+			{
+				Dispatcher.BeginInvoke(() =>
+				{
+					if (x.Result.Count == 0)
+					{
+						StatusLabel.Text = "No result";
+					}
+					else
+					{
+						StatusLabel.Visibility = Visibility.Collapsed;
+					}
+					foreach (Tweet t in x.Result)
+					{
+						_source.Add(t);
+					}
+				});
+
+				Bootstrap.TwitterSearchService.StreamAsync(Bootstrap.HASHTAG, (t) =>
+				{
+					Dispatcher.BeginInvoke(() =>
+					{
+						if (StatusLabel.Visibility == Visibility.Visible)
+						{
+							StatusLabel.Visibility = Visibility.Collapsed;
+						}
+
+						_source.Insert(0, t);
+						Task.Run(() => Dispatcher.BeginInvoke(() => TweetList.ScrollTo(t)));
+					});
+				});
+			});
 		}
-
-		// Exemple de code pour la conception d'une ApplicationBar localisée
-		//private void BuildLocalizedApplicationBar()
-		//{
-		//    // Définit l'ApplicationBar de la page sur une nouvelle instance d'ApplicationBar.
-		//    ApplicationBar = new ApplicationBar();
-
-		//    // Crée un bouton et définit la valeur du texte sur la chaîne localisée issue d'AppResources.
-		//    ApplicationBarIconButton appBarButton = new ApplicationBarIconButton(new Uri("/Assets/AppBar/appbar.add.rest.png", UriKind.Relative));
-		//    appBarButton.Text = AppResources.AppBarButtonText;
-		//    ApplicationBar.Buttons.Add(appBarButton);
-
-		//    // Crée un nouvel élément de menu avec la chaîne localisée d'AppResources.
-		//    ApplicationBarMenuItem appBarMenuItem = new ApplicationBarMenuItem(AppResources.AppBarMenuItemText);
-		//    ApplicationBar.MenuItems.Add(appBarMenuItem);
-		//}
 	}
 }

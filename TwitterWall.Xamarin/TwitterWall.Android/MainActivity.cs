@@ -25,6 +25,10 @@ namespace TwitterWall.Android
 			Button button = FindViewById<Button>(Resource.Id.MyButton);
 
 			button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
+
+
+			Bootstrap.Initialize();
+			Bootstrap.TwitterSearchService.Search();
 		}
 	}
 }
