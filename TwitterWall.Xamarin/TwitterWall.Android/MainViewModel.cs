@@ -1,7 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading;
 using Storm.Mvvm;
 using Storm.Mvvm.Services;
 using TwitterWall.Model;
+using Timer = System.Timers.Timer;
 
 namespace TwitterWall.Android
 {
@@ -25,24 +28,35 @@ namespace TwitterWall.Android
 		{
 			base.OnNavigatedTo(e, parametersKey);
 
+			Timer timer = new Timer(15000);
+			timer.Elapsed += (sender, args) => UpdateList();
+			timer.Start();
+
+			UpdateList();
+		}
+
+		private void UpdateList()
+		{
 			Bootstrap.TwitterSearchService.SearchAsync(Bootstrap.HASHTAG).ContinueWith(x =>
 			{
 				DispatcherService.InvokeOnUIThread(() =>
 				{
-					foreach (Tweet tweet in x.Result)
+					if (Tweets.Count == 0)
 					{
-						Tweets.Add(tweet);
+						foreach (Tweet tweet in x.Result)
+						{
+							Tweets.Add(tweet);
+						}
 					}
-				});
-
-				Bootstrap.TwitterSearchService.StreamAsync(Bootstrap.HASHTAG, (tweet) =>
-				{
-					DispatcherService.InvokeOnUIThread(() =>
+					else
 					{
-						var o = new ObservableCollection<Tweet>(Tweets);
-						o.Insert(0, tweet);
-						Tweets = o;
-					});
+						ulong firstId = Tweets.First().Id;
+						int index = 0;
+						foreach (Tweet tweet in x.Result.Where(t => t.Id > firstId))
+						{
+							Tweets.Insert(index++, tweet);
+						}
+					}
 				});
 			});
 		}

@@ -17,7 +17,7 @@ namespace TwitterWall.Console
 			System.Console.WriteLine("Searching...");
 			Bootstrap.TwitterSearchService.StreamAsync(Bootstrap.HASHTAG, t =>
 			{
-				Debug.WriteLine("Got a tweet from {0} => {1}", t.UserName, t.Text);
+				System.Console.WriteLine("Got a tweet from {0} => {1}", t.UserName, t.Text);
 
 				HttpClient client = new HttpClient();
 				client.PostAsync("http://storm-project.fr/walltweet/post.php", new FormUrlEncodedContent(new Dictionary<string, string>
