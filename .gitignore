@@ -194,3 +194,7 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+# Xamarin.Android generation file
+Resource.Designer.cs
+AndroidManifest.xml
