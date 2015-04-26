@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using LinqToTwitter;
+using Newtonsoft.Json;
 using TwitterWall.Model;
 
 namespace TwitterWall.Services
@@ -13,26 +15,38 @@ namespace TwitterWall.Services
 		private IAuthorizer _authorizer;
 		private TwitterContext _context;
 
+		//public async Task<List<Tweet>> SearchAsync(string hashtag)
+		//{
+		//	TwitterContext twitterContext = await GetContextAsync();
+
+		//	Search res = await (from search in twitterContext.Search
+		//						where search.Type == SearchType.Search &&
+		//								search.Query == string.Format("#{0}", hashtag)
+		//						select search).SingleOrDefaultAsync();
+
+		//	if (res != null && res.Statuses != null)
+		//	{
+		//		return res.Statuses.Select(x => new Tweet
+		//		{
+		//			Id = x.ID,
+		//			Text = x.Text,
+		//			UserImage = x.User.ProfileImageUrl,
+		//			UserName = x.User.ScreenNameResponse
+		//		}).ToList();
+		//	}
+		//	return new List<Tweet>();
+		//}
+
 		public async Task<List<Tweet>> SearchAsync(string hashtag)
 		{
-			TwitterContext twitterContext = await GetContextAsync();
-
-			Search res = await (from search in twitterContext.Search
-								where search.Type == SearchType.Search &&
-										search.Query == string.Format("#{0}", hashtag) &&
-										search.ResultType == ResultType.Recent &&
-										search.SinceID == 569135282857115648
-								select search).SingleOrDefaultAsync();
-
-			if (res != null && res.Statuses != null)
+			HttpClient client = new HttpClient();
+			var request = await client.GetAsync("http://storm-project.fr/walltweet/get.php");
+			if (request.IsSuccessStatusCode)
 			{
-				return res.Statuses.Select(x => new Tweet
-				{
-					Id = x.ID,
-					Text = x.Text,
-					UserImage = x.User.ProfileImageUrl,
-					UserName = x.User.ScreenNameResponse
-				}).ToList();
+				string content = await request.Content.ReadAsStringAsync();
+
+				List<Tweet> tweets = JsonConvert.DeserializeObject<List<Tweet>>(content);
+				return tweets;
 			}
 			return new List<Tweet>();
 		}
@@ -64,7 +78,7 @@ namespace TwitterWall.Services
 						   });
 
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 
 				throw;

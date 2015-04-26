@@ -5,11 +5,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Storm.Mvvm;
 
 namespace TwitterWall.Android
 {
 	[Activity(Label = "TwitterWall.Android", MainLauncher = true, Icon = "@drawable/icon")]
-	public class MainActivity : Activity
+	public partial class MainActivity : ActivityBase
 	{
 		int count = 1;
 
@@ -18,17 +19,8 @@ namespace TwitterWall.Android
 			base.OnCreate(bundle);
 
 			// Set our view from the "main" layout resource
-			SetContentView(Resource.Layout.Main);
-
-			// Get our button from the layout resource,
-			// and attach an event to it
-			Button button = FindViewById<Button>(Resource.Id.MyButton);
-
-			button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
-
-
-			Bootstrap.Initialize();
-			Bootstrap.TwitterSearchService.Search();
+			SetContentView(Resource.Layout.MainView);
+			SetViewModel(new MainViewModel());
 		}
 	}
 }
