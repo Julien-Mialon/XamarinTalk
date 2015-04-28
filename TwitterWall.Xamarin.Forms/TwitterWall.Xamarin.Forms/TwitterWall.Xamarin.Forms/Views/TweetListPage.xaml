@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:TwitterWall.ViewModels;assembly=TwitterWall.Xamarin.Forms"
+             x:Class="TwitterWall.Views.TweetListPage">
+	<ContentPage.BindingContext>
+		<viewModels:TweetListViewModel />
+	</ContentPage.BindingContext>
+	
+	<StackLayout Orientation="Vertical"
+				 VerticalOptions="FillAndExpand"
+				 HorizontalOptions="FillAndExpand"
+				 >
+		<Label Text="Twitter wall app for Xamarin.Forms" />
+		<Label Text="{Binding Hashtag, StringFormat='#{0}'}" />
+
+		<ListView VerticalOptions="FillAndExpand"
+				  HorizontalOptions="FillAndExpand"
+				  ItemsSource="{Binding Tweets}"
+				  HasUnevenRows="True"
+				  >
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<ViewCell>
+						<ViewCell.View>
+							<Grid Padding="12,12,12,12">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+								
+								<Image Source="{Binding UserImage}" 
+									   Aspect="AspectFit"
+									   HorizontalOptions="CenterAndExpand"
+									   VerticalOptions="CenterAndExpand"
+									   Grid.Row="0"
+									   Grid.Column="0"
+									   Grid.RowSpan="2"
+									   />
+								<Label Text="{Binding UserName, StringFormat='@{0}'}"
+									   Grid.Row="0"
+									   Grid.Column="1"
+									   FontSize="24"
+									   FontAttributes="Bold"
+									   />
+								<Label Text="{Binding Text}"
+									   Grid.Row="1"
+									   Grid.Column="1"
+									   FontSize="18"
+									   FontAttributes="Bold"
+									   />
+							</Grid>
+						</ViewCell.View>
+					</ViewCell>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</StackLayout>
+</ContentPage>
