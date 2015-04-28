@@ -90,8 +90,18 @@ namespace TwitterWall.Services
 		{
 			if (_authorizer == null)
 			{
-				var auth = new SingleUserAuthorizer()
+				var auth = new SingleUserAuthorizer
 				{
+					CredentialStore = new SingleUserInMemoryCredentialStore
+					{
+						ConsumerKey = "i4CpLM6hX3TuR2EGNvAfVOYxT",
+						ConsumerSecret = "HUm1Vfp4Y1HhKg1hKQrypOHQyOuHohNrYuT6qU2spKS9rJ1YpN",
+						OAuthToken = "314742868-8K7Fcv7KgaY3WXzr60MLQN9776BLD7z62iuHWkf2",
+						OAuthTokenSecret = "vmPbZGBQ3wphMHUBM4bXkAW09axy0M8vcGurK1LH4oYli",
+						AccessToken = "314742868-8K7Fcv7KgaY3WXzr60MLQN9776BLD7z62iuHWkf2",
+						AccessTokenSecret = "vmPbZGBQ3wphMHUBM4bXkAW09axy0M8vcGurK1LH4oYli"
+					}
+					/*
 					CredentialStore = new InMemoryCredentialStore
 					{
 						ConsumerKey = "i4CpLM6hX3TuR2EGNvAfVOYxT",
@@ -99,6 +109,7 @@ namespace TwitterWall.Services
 						OAuthToken = "314742868-8K7Fcv7KgaY3WXzr60MLQN9776BLD7z62iuHWkf2",
 						OAuthTokenSecret = "vmPbZGBQ3wphMHUBM4bXkAW09axy0M8vcGurK1LH4oYli"
 					}
+					 */
 				};
 				await auth.AuthorizeAsync();
 				_authorizer = auth;

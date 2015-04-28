@@ -19,6 +19,8 @@ namespace TwitterWall.Android
 		private TextView _hashtagTextView;
 		private ListView _tweetListView;
 
+		private List<Tweet> _tweets;
+
 		public TextView HashtagTextView
 		{
 			get { return _hashtagTextView ?? (_hashtagTextView = FindViewById<TextView>(Resource.Id.Hashtag)); }
@@ -44,9 +46,16 @@ namespace TwitterWall.Android
 		private async void LoadTweetsAsync()
 		{
 			Bootstrap.Initialize();
-			List<Tweet> tweets = await Bootstrap.TwitterSearchService.SearchAsync(Bootstrap.HASHTAG);
+			_tweets = await Bootstrap.TwitterSearchService.SearchAsync(Bootstrap.HASHTAG);
 			
-			TweetListView.Adapter = new TweetAdapter(this, Resource.Layout.TweetTemplate, tweets.ToArray());
+			TweetListView.Adapter = new TweetAdapter(this, Resource.Layout.TweetTemplate, _tweets.ToArray());
+
+			Bootstrap.TwitterSearchService.StreamAsync(Bootstrap.HASHTAG, t =>
+			{
+				_tweets.Insert(0, t);
+
+				RunOnUiThread(() => TweetListView.Adapter = new TweetAdapter(this, Resource.Layout.TweetTemplate, _tweets.ToArray()));
+			});
 		}
 	}
 }
